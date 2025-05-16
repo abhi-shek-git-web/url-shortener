@@ -12,7 +12,7 @@ import (
 func Test_urlShortnerOk(t *testing.T) {
 
 	body := `{
-		"url":"http://example.com/abc"
+		"url":"http://youtube.com/"
 	}`
 	reqBody := bytes.NewBuffer([]byte(body))
 	req, err := http.NewRequest(http.MethodPost, "/urlShortner", reqBody)
