@@ -35,9 +35,8 @@ func UrlShortner(w http.ResponseWriter, r *http.Request) {
 
 	// checking if url is already short
 	if len(urlInput.Url) <= 8 {
-		_, err := w.Write([]byte("url is already short"))
-		log.Print("error occured during sending response. error =", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		log.Print("url is already short")
+		http.Error(w, "url is already short", http.StatusBadRequest)
 		return
 	}
 
@@ -57,18 +56,11 @@ func UrlShortner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// checking if host is valid
+	// checking if url syntax is valid
 	_, err = net.LookupHost(host)
 	if err != nil {
 		log.Print("error occured during checking host. error =", err)
 		http.Error(w, "invalid request", http.StatusBadRequest)
-		return
-	}
-
-	// validating url scheme
-	if parsedUrl.Scheme == "" {
-		log.Print("invalid scheme")
-		http.Error(w, "invalid url scheme", http.StatusBadRequest)
 		return
 	}
 
@@ -99,9 +91,10 @@ func UrlShortner(w http.ResponseWriter, r *http.Request) {
 }
 
 func generateShortUrl(originalUrl string) string {
+
 	// generating hash
-	h := sha256.Sum256([]byte(originalUrl))
-	hashStr := base64.URLEncoding.EncodeToString(h[:])
+	hash := sha256.Sum256([]byte(originalUrl))
+	hashStr := base64.URLEncoding.EncodeToString(hash[:])
 	shortenedUrl := hashStr[:8]
 
 	mu.Lock()
@@ -119,6 +112,7 @@ func generateShortUrl(originalUrl string) string {
 		log.Print("error occured during parsing url", err)
 		return ""
 	}
+
 	host := parsedUrl.Hostname()
 	DomainCounter[host]++
 
@@ -139,6 +133,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// find origional url corresponding to given short url
 
 	mu.Lock()
+
 	// find origional url from saved urls
 	savedUrl := savedUrl[shortUrl]
 
@@ -156,17 +151,17 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 func Metrics(w http.ResponseWriter, r *http.Request) {
 
 	// place all data into a slice
-	type DomainStats struct {
+	type domainStats struct {
 		Domain string
 		Count  int
 	}
 
-	var stats []DomainStats
+	var stats []domainStats
 
 	mu.Lock()
 
 	for dom, cnt := range DomainCounter {
-		stats = append(stats, DomainStats{Domain: dom, Count: cnt})
+		stats = append(stats, domainStats{Domain: dom, Count: cnt})
 	}
 
 	mu.Unlock()

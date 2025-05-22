@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func Test_Redirect(t *testing.T) {
+func Test_RedirectOk(t *testing.T) {
 	url := "http://localhost/abcd"
 	shortUrl := "O4WVmCTH"
 	savedUrl[shortUrl] = models.Url{
@@ -18,14 +18,12 @@ func Test_Redirect(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodGet, "/redirect/O4WVmCTH", nil)
 	if err != nil {
-		log.Print("error occured during making req. error =", err)
-		t.Fail()
+		log.Fatalf("error occured during making req. error = %v", err)
 	}
 	res := httptest.NewRecorder()
 	Redirect(res, req)
 	if res.Code != http.StatusOK {
-		log.Printf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
-		t.Fail()
+		log.Fatalf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
 	}
 }
 
@@ -39,14 +37,12 @@ func Test_RedirectNilInput(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodGet, "/redirect/", nil)
 	if err != nil {
-		log.Print("error occured during making req. error =", err)
-		t.Fail()
+		log.Fatalf("error occured during making req. error = %v", err)
 	}
 	res := httptest.NewRecorder()
 	Redirect(res, req)
 	if res.Code != http.StatusBadRequest {
-		log.Printf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
-		t.Fail()
+		log.Fatalf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
 	}
 }
 func Test_RedirectNilWrongInput(t *testing.T) {
@@ -59,14 +55,12 @@ func Test_RedirectNilWrongInput(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodGet, "/redirect/O4WVmjklmn", nil)
 	if err != nil {
-		log.Print("error occured during making req. error =", err)
-		t.Fail()
+		log.Fatalf("error occured during making req. error = %v", err)
 	}
 	res := httptest.NewRecorder()
 	Redirect(res, req)
 	if res.Code != http.StatusBadRequest {
-		log.Printf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
-		t.Fail()
+		log.Fatalf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
 	}
 }
 func Test_RedirectNilWrongPath(t *testing.T) {
@@ -79,14 +73,12 @@ func Test_RedirectNilWrongPath(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodGet, "/redirectO4WVmCTH", nil)
 	if err != nil {
-		log.Print("error occured during making req. error =", err)
-		t.Fail()
+		log.Fatalf("error occured during making req. error = %v", err)
 	}
 	res := httptest.NewRecorder()
 	Redirect(res, req)
 	if res.Code != http.StatusBadRequest {
-		log.Printf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
-		t.Fail()
+		log.Fatalf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
 	}
 }
 func Test_RedirectNilUrl(t *testing.T) {
@@ -99,13 +91,11 @@ func Test_RedirectNilUrl(t *testing.T) {
 
 	req, err := http.NewRequest(http.MethodGet, "/redirect/O4WVmCTH", nil)
 	if err != nil {
-		log.Print("error occured during making req. error =", err)
-		t.Fail()
+		log.Fatalf("error occured during making req. error = %v", err)
 	}
 	res := httptest.NewRecorder()
 	Redirect(res, req)
 	if res.Code != http.StatusBadRequest {
-		log.Printf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
-		t.Fail()
+		log.Fatalf("response status code doesn't match. Want %d but got %d", http.StatusOK, res.Code)
 	}
 }
